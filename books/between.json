@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 2,
+  "id": "between",
+  "name": "Between the Lines",
+  "categories": [
+    {
+      "name": "Villager",
+      "color": "#e9b769",
+      "roles": [
+        {
+          "name": "Admirer",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Archivist",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Card Reader",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Diviner",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Foreseer",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Gatekeeper",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Panhandler",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Private Eye",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Prophet",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Scribe",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Ventriloquist",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Vigilante",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Courier",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Outcast",
+      "color": "#83bacd",
+      "roles": [
+        {
+          "name": "Actor",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Canary",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Cultist",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Mourner",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Underling",
+      "color": "#d2a0e5",
+      "roles": [
+        {
+          "name": "Bibliotaph",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Operator",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Shyster",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Tormentor",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Fiend",
+      "color": "#e6a6a6",
+      "roles": [
+        {
+          "name": "Headhunter",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Magpie",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Shroud",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    }
+  ]
+}
