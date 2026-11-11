@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111522">
+<title>Roleforge | Custom Books & Chaos Mode</title>
+<style>
+  :root { color-scheme: dark; --bg:#0b0f19; --surface:#171c2a; --surface2:#1e2535; --edge:#353d50; --text:#f4f5f8; --muted:#aeb6c8; --accent:#ffcc7a; --gold:#e9aa55; --green:#94e5bf; --red:#ff9d9d; --focus:#97bdff; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:radial-gradient(ellipse 900px 540px at 80% -5%,#27314d 0%,transparent 65%),var(--bg); color:var(--text); font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+  button,input,textarea { font:inherit; }
+  button { -webkit-tap-highlight-color:transparent; cursor:pointer; }
+  button:disabled { opacity:.42; cursor:not-allowed; }
+  button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+  .wrap { width:min(1140px,calc(100% - 36px)); margin:auto; }
+  header { border-bottom:1px solid #353d5070; padding:25px 0 23px; }
+  .topline { display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:12px; font-size:14px; text-transform:uppercase; letter-spacing:2px; font-weight:800; }
+  .logo { width:42px; height:42px; display:grid; place-items:center; border:1px solid #f4c9806e; border-radius:12px; color:var(--accent); font-size:25px; background:#302a27; }
+  .topactions { display:flex; gap:7px; flex-wrap:wrap; }
+  h1 { margin:22px 0 7px; font-size:clamp(29px,5vw,48px); line-height:1.1; letter-spacing:-1.3px; }
+  h2 { margin:0; font-size:19px; letter-spacing:-.25px; }
+  h3 { margin:0; font-size:17px; }
+  p { margin:7px 0 0; }
+  .sub { max-width:760px; color:var(--muted); font-size:16px; }
+  .muted,.hint { color:var(--muted); }
+  .hint { font-size:13px; margin-top:7px; }
+  .step { font-weight:800; color:var(--accent); margin-right:9px; letter-spacing:1px; font-size:12px; }
+  main { padding:24px 0 70px; }
+  .statbar { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
+  .stat { background:var(--surface); border:1px solid var(--edge); padding:13px 16px; border-radius:14px; }
+  .stat strong { display:block; font-size:26px; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .stat small { color:var(--muted); display:block; margin-top:7px; }
+  .layout { display:grid; grid-template-columns:minmax(270px,330px) minmax(0,1fr); gap:18px; align-items:start; }
+  .stack { display:grid; gap:16px; }
+  .panel { background:var(--surface); border:1px solid var(--edge); border-radius:18px; padding:19px; min-width:0; }
+  .panelhead { display:flex; gap:10px; justify-content:space-between; align-items:center; margin-bottom:13px; }
+  .btn { display:inline-flex; gap:7px; justify-content:center; align-items:center; text-decoration:none; white-space:nowrap; border:1px solid var(--edge); border-radius:11px; background:#262e40; color:var(--text); padding:9px 13px; font-weight:650; min-height:42px; line-height:1.2; }
+  .btn:hover:not(:disabled) { background:#334057; }
+  .btn.primary { background:var(--accent); color:#271d0c; border-color:var(--accent); }
+  .btn.primary:hover:not(:disabled) { background:#ffda9e; }
+  .btn.outline { background:transparent; }
+  .btn.danger { color:var(--red); }
+  .btn.small { min-height:35px; font-size:13px; padding:7px 10px; }
+  .btn.iconbtn { min-width:35px; min-height:35px; padding:6px 8px; font-size:19px; }
+  .btn.block { width:100%; }
+  .input, textarea { display:block; width:100%; border:1px solid #475065; outline:none; background:#101625; color:var(--text); border-radius:10px; padding:10px 11px; font-size:15px; }
+  textarea { resize:vertical; min-height:140px; }
+  .input:focus,textarea:focus { border-color:var(--focus); }
+  label { display:block; color:var(--muted); font-size:12px; font-weight:700; margin-bottom:5px; }
+  .labelnote { font-size:12px; color:var(--muted); }
+  .instructions { margin:0; padding-left:19px; color:var(--muted); font-size:14px; }
+  .instructions li+li { margin-top:6px; }
+  .notice { border-radius:12px; background:#1f2636; border:1px solid #465064; padding:12px; color:#d5dbe8; font-size:13px; }
+  .notice.success { border-color:#47715c; color:#bcead2; background:#1d322b; }
+  .notice.error { border-color:#89575b; background:#37252c; color:#ffd0ce; }
+  .notice ul { padding-left:18px; margin:6px 0 0; }
+  .notice li+li { margin-top:4px; }
+  .catlist { display:grid; gap:14px; }
+  .catcard { border:1px solid #3f475b; background:var(--surface2); border-radius:15px; padding:16px; border-left:4px solid var(--cat-accent); }
+  .cathead { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:end; }
+  .cattop { display:grid; grid-template-columns:minmax(0,1fr) minmax(110px,135px); gap:10px; margin-top:12px; }
+  .quota { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .quota input { font-variant-numeric:tabular-nums; }
+  .roles-top { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:17px 0 7px; }
+  .roletitle { font-size:13px; color:#d9dfeb; font-weight:750; }
+  .rolelist { display:grid; gap:8px; }
+  .role { display:grid; grid-template-columns:minmax(0,1fr) 71px 34px; align-items:end; gap:8px; }
+  .role .input { padding:8px 10px; }
+  .description-toggle { grid-column:1 / -1; }
+  .role details { margin-top:-4px; }
+  summary { color:var(--muted); font-size:12px; cursor:pointer; width:fit-content; }
+  .role-desc { margin-top:7px; min-height:52px; font-size:13px; }
+  .catfoot { margin-top:9px; font-size:12px; color:#afbacb; }
+  .addarea { padding-top:13px; }
+  .drawpanel { margin-top:19px; }
+  .drawrow { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:14px; }
+  .drawrow .btn.primary { flex:1; font-size:16px; min-height:49px; }
+  .drawrow .hint { flex:2; margin-top:0; }
+  .results { margin-top:19px; display:none; }
+  .results.visible { display:block; }
+  .results-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:start; }
+  .people { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:16px; }
+  .person { background:var(--surface2); border:1px solid var(--edge); border-radius:12px; padding:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .person-name { min-width:0; overflow-wrap:anywhere; font-weight:700; }
+  .viewed { color:var(--green); font-size:11px; margin-top:3px; }
+  .hostsec { margin-top:18px; border-top:1px solid var(--edge); padding-top:16px; }
+  .hosttable { width:100%; border-collapse:collapse; margin-top:10px; font-size:14px; }
+  .hosttable th,.hosttable td { padding:9px 7px; border-bottom:1px solid #434c5d; text-align:left; overflow-wrap:anywhere; }
+  .hosttable th { color:#bfc8d8; font-weight:700; }
+  .colorpill { border-radius:6px; padding:3px 7px; font-size:12px; border:1px solid currentColor; }
+  .modalwrap { position:fixed; inset:0; background:#050814ed; z-index:50; display:none; padding:18px; justify-content:center; align-items:center; backdrop-filter:blur(8px); }
+  .modalwrap.open { display:flex; }
+  .modal { background:#192133; border:1px solid #5b657d; border-radius:23px; width:min(100%,460px); min-height:290px; padding:28px; display:flex; flex-direction:column; align-items:stretch; text-align:center; box-shadow:0 24px 100px #0009; }
+  .modal .eyebrow { font-size:12px; font-weight:750; color:var(--accent); text-transform:uppercase; letter-spacing:1.7px; }
+  .modal-name { font-size:25px; font-weight:800; margin:14px 0 12px; overflow-wrap:anywhere; }
+  .role-reveal { font-size:32px; font-weight:850; line-height:1.15; margin:16px 0; overflow-wrap:anywhere; }
+  .role-cat { font-size:13px; font-weight:700; margin:0 0 12px; }
+  .role-description { color:#dce2ee; font-size:14px; margin:0 auto 18px; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .modal-actions { margin-top:auto; }
+  .footer { font-size:12px; margin-top:22px; color:var(--muted); }
+  .hidden { display:none !important; }
+  .spaced { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; }
+  .tag { color:#e9d2a8; border:1px solid #8d7249; padding:3px 8px; font-size:11px; font-weight:700; border-radius:100px; }
+  .namecount { font-weight:700; font-variant-numeric:tabular-nums; }
+  @media(max-width:800px) { .layout { grid-template-columns:1fr; } .statbar { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:520px) {
+    .wrap { width:min(100% - 24px,1140px); }
+    header { padding-top:15px; }
+    .topline { align-items:flex-start; }
+    .topactions { width:100%; }
+    .topactions .btn { flex:1; }
+    .stat { padding:12px; }
+    .panel { padding:15px; border-radius:14px; }
+    .catcard { padding:12px; }
+    .cattop { grid-template-columns:minmax(0,1fr) 92px; }
+    .role { grid-template-columns:minmax(0,1fr) 64px 34px; gap:6px; }
+    .role .input { padding:8px 6px; }
+    .drawrow { display:block; }
+    .drawrow .hint { margin-top:10px; }
+    .people { grid-template-columns:1fr; }
+    .modal { padding:20px; }
+    .hosttable { font-size:12px; }
+    .hosttable th,.hosttable td { padding:8px 4px; }
+  }
+
+  /* Compact role editing prevents dozens of roles from overwhelming phones. */
+  .roles-details { margin-top:16px; border-top:1px solid #4a5366;padding-top:8px; }
+  .roles-summary { display:block;width:100%;cursor:pointer;font-size:13px;color:#f6d8a6;font-weight:750;padding:8px 4px; }
+  .roles-summary::before {content:'▸';margin-right:9px;}
+  .roles-details[open] .roles-summary::before {content:'▾';}
+  .roles-details[open] .roles-summary {margin-bottom:9px;}
+  /* Book selector and Chaos controls */
+  .mode-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px; }
+  .mode-btn { display:flex; flex-direction:column; align-items:flex-start; gap:3px; min-width:0; min-height:69px; padding:12px; text-align:left; color:var(--text); font-weight:750; background:#20283a; border:1px solid #465065; border-radius:12px; white-space:normal; line-height:1.3; }
+  .mode-btn small { color:var(--muted);font-size:11px;font-weight:500; }
+  .mode-btn.selected { border:2px solid var(--accent); padding:11px; background:#423522; color:#ffe2ae; }
+  .mode-btn.selected small { color:#ffe0b2; }
+  .mode-btn.chaos { background:#2b2440; }
+  .mode-btn.chaos.selected { background:#423353; border-color:#d8a7ff; }
+  .chaos-config { margin-top:14px;padding:12px;background:#2c263a;border-radius:12px;border:1px solid #5d4c70; }
+  .book-tag { display:inline-block; font-size:11px; font-weight:750; padding:4px 8px; background:#353d51; border-radius:8px; color:#e8d8bc; }
+  .role-bookline { grid-column:1/-1; display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap; }
+  .book-move { display:flex;flex:1;min-width:165px;max-width:250px;align-items:center;gap:8px;margin:0; }
+  .book-move .input { min-width:0; padding:5px 7px; font-size:12px; }
+  .addbuttons { display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end; }
+  .roles-top { align-items:flex-start; }
+  .roletitle { padding-top:7px; }
+  .book-origin { font-size:12px;color:#e6cc96;font-weight:700;margin:-4px 0 14px; }
+  @media(max-width:520px) { .mode-btn{padding:10px;min-height:66px;font-size:13px}.mode-btn.selected{padding:9px}.mode-grid{gap:7px}.roles-top{flex-direction:column;align-items:stretch}.addbuttons{justify-content:flex-start}.role-bookline{gap:6px}.book-move{max-width:none}.tag{font-size:10px}.stat strong{font-size:22px} }
+
+  select.input { appearance:auto; }
+  .book-text { min-height:150px; font-family:ui-monospace, SFMono-Regular, Consolas, monospace; font-size:13px; line-height:1.5; }
+  .format-example { color:#f3e1c0; background:#111727; border:1px solid #465064; padding:12px; border-radius:10px; font-size:12px; line-height:1.5; white-space:pre-wrap; }
+  .button-line { display:flex; gap:7px; flex-wrap:wrap; margin-top:10px; }
+  .button-line .btn { white-space:normal; flex-grow:1; }
+  .mini-divider { border-top:1px solid #465064; margin-top:20px; }
+  .chaos-book-row { display:grid; grid-template-columns:minmax(0,1fr) 76px; align-items:center; gap:10px; background:#211d30; border:1px solid #60506d; border-radius:10px; padding:9px; }
+  .chaos-book-row label { margin-bottom:0; font-size:13px; color:var(--text); display:flex; align-items:center; gap:8px; font-weight:600; min-width:0; overflow-wrap:anywhere; }
+  .chaos-book-row input[type=checkbox] { width:18px;height:18px;flex:none; accent-color:var(--accent); }
+  .chaos-book-row .input { padding:7px 8px; }
+  .book-manager-note { font-size:12px;color:var(--muted); }
+  @media(max-width:520px){ .button-line .btn { min-height:43px; } .mode-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+  /* GitHub library integration */
+  .git-fields {display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px;}
+  .git-fields .input {min-width:0;}
+  #gitStatus {overflow-wrap:anywhere;}
+  #gitStatus strong {font-weight:800;}
+  #gitSettings code {font-size:12px;color:#ffdda7;}
+  @media(max-width:520px){.git-fields {grid-template-columns:1fr;} #gitRefresh,#gitDiscard{flex:1;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topline">
+      <div class="brand"><div class="logo" aria-hidden="true">✦</div><span>ROLEFORGE<br><span style="font-size:10px;color:#b5bdd0;letter-spacing:1.4px">STORYTELLER TOOLS</span></span></div>
+      <div class="topactions">
+        <button type="button" id="exportBtn" class="btn small">↓ Export setup</button>
+        <button type="button" id="importBtn" class="btn small">↑ Import setup</button>
+        <input type="file" id="importFile" accept=".json,application/json" class="hidden" aria-label="Import a saved role setup">
+      </div>
+    </div>
+    <h1>Your books. Your chaos.</h1>
+    <p class="sub">Build custom books and Chaos Mode assignments. Share separately versioned GitHub books with every player or storyteller, while keeping player names and secret roles on your own device.</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="statbar" aria-live="polite">
+    <div class="stat"><strong id="playersStat">0</strong><small>Players</small></div>
+    <div class="stat"><strong id="rolesStat">0</strong><small>Role slots available</small></div>
+    <div class="stat"><strong id="minStat">0</strong><small>Minimum required</small></div>
+    <div class="stat"><strong id="maxStat">0</strong><small>Maximum permitted</small></div>
+  </div>
+  <div class="layout">
+    <aside class="stack">
+      <section class="panel" aria-labelledby="bookHead">
+        <div class="panelhead"><h2 id="bookHead"><span class="step">00</span> Choose your book</h2><span id="selectedBook" class="tag">Keepers &amp; Reapers</span></div>
+        <div id="modeButtons" class="mode-grid" role="group" aria-label="Role book selection"></div>
+        <p id="modeHint" class="hint"></p>
+        <div id="chaosConfig" class="chaos-config hidden">
+          <div class="roletitle">Chaos Mode: included books &amp; guaranteed minimums</div>
+          <p class="hint">Select at least two books. Set minimum 1 to guarantee a book contributes a role; set 0 to leave its contribution optional.</p>
+          <div id="chaosBookList" class="stack" style="margin-top:12px;gap:9px"></div>
+        </div>
+      </section>
+      <section class="panel" aria-labelledby="bookManageHead">
+        <div class="panelhead"><h2 id="bookManageHead"><span class="step">00B</span> Book library</h2><span class="tag">Editable</span></div>
+        <details class="roles-details" id="bookManager">
+          <summary class="roles-summary">Add, edit, or import books</summary>
+          <p class="hint">Use the same format as your Word documents: category heading, then bulleted role names. Paste the text or load a .txt / .docx file.</p>
+          <pre class="format-example">Villager
+• Bookkeeper
+• Crowkeeper
+
+Outcast
+• Barkeeper
+• Mourner</pre>
+          <h3 style="margin:15px 0 8px">Create a new book</h3>
+          <label for="newBookName">New book title</label><input id="newBookName" class="input" maxlength="120" placeholder="e.g. Moonlit Secrets">
+          <label for="newBookText" style="margin-top:10px">Paste role list (optional)</label><textarea id="newBookText" class="input book-text" spellcheck="false" placeholder="Villager
+• Seer
+• Watchman
+
+Fiend
+• Wraith"></textarea>
+          <div class="button-line"><button type="button" id="newBookUploadBtn" class="btn small outline">↑ Load text / Word file</button><button type="button" id="addBookBtn" class="btn small primary">＋ Create book</button></div>
+          <input id="newBookFile" type="file" accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden">
+          <div class="mini-divider"></div>
+          <h3 style="margin:15px 0 9px">Modify an existing book</h3>
+          <label for="editBookSelect">Choose a book</label><select id="editBookSelect" class="input"></select>
+          <label for="editBookName" style="margin-top:10px">Book title</label><input id="editBookName" class="input" maxlength="120">
+          <label for="editBookText" style="margin-top:10px">Roles, organized by category</label><textarea id="editBookText" class="input book-text" spellcheck="false"></textarea>
+          <p class="hint">Save &amp; replace updates this book to match the text. Add / merge keeps current roles and adds new titles. Matching roles retain their descriptions and copy counts.</p>
+          <div class="button-line"><button type="button" id="editBookUploadBtn" class="btn small outline">↑ Load file</button><button type="button" id="saveBookBtn" class="btn small primary">Save &amp; replace</button><button type="button" id="mergeBookBtn" class="btn small">Add / merge</button></div>
+          <input id="editBookFile" type="file" accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden">
+          <div class="button-line"><button type="button" id="downloadBookBtn" class="btn small outline">↓ Export book as text</button><button type="button" id="deleteBookBtn" class="btn small danger outline">Delete this book</button></div>
+          <div id="bookMessage" class="hint" role="status" aria-live="polite"></div>
+        </details>
+      </section>
+      <section class="panel" aria-labelledby="githubHead">
+        <div class="panelhead"><h2 id="githubHead"><span class="step">00C</span> Shared GitHub books</h2><span id="gitBadge" class="tag">Not connected</span></div>
+        <p class="hint">Each book is a separate JSON file and gets its <strong>own Git commit</strong> when published. Everyone reads the same books from a public GitHub repository; players, quotas and secret assignments stay private on each device.</p>
+        <details id="gitSettings" class="roles-details">
+          <summary class="roles-summary">Connect repository &amp; editor settings</summary>
+          <label for="gitOwner">GitHub owner / username</label><input id="gitOwner" class="input" maxlength="39" placeholder="your-username" autocapitalize="off" autocomplete="off" spellcheck="false">
+          <label for="gitRepo" style="margin-top:10px">Repository name</label><input id="gitRepo" class="input" maxlength="100" placeholder="roleforge-library" autocapitalize="off" autocomplete="off" spellcheck="false">
+          <div class="git-fields">
+            <div><label for="gitBranch">Branch</label><input id="gitBranch" class="input" value="main" maxlength="100" autocapitalize="off" spellcheck="false"></div>
+            <div><label for="gitPath">Books folder</label><input id="gitPath" class="input" value="books" maxlength="180" autocapitalize="off" spellcheck="false"></div>
+          </div>
+          <div class="button-line"><button type="button" class="btn small primary" id="gitConnect">Save connection &amp; load</button><button type="button" class="btn small outline" id="gitShare">Copy sharing link</button></div>
+          <p class="hint">Public readers need no GitHub account. Share the hosted site URL with <code>?repo=OWNER/REPO</code> to connect new devices automatically.</p>
+          <div class="mini-divider"></div>
+          <h3 style="margin:14px 0 6px">Publish as a GitHub editor</h3>
+          <label for="gitToken">Fine-grained GitHub token (editors only)</label><input id="gitToken" class="input" type="password" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" spellcheck="false">
+          <p class="hint">Your token is used only for this browser session. Grant <strong>Contents: Read and write</strong> for this repository only. Never embed a token in HTML, paste it into chat, or use an untrusted/shared device.</p>
+          <div class="button-line"><button type="button" id="gitPublish" class="btn small primary">↑ Publish (one commit per book)</button><button type="button" id="gitClearToken" class="btn small outline">Clear token</button></div>
+          <div class="button-line"><a id="gitEditWeb" class="btn small outline" href="https://github.com" target="_blank" rel="noopener noreferrer">Open books folder on GitHub</a><button type="button" id="gitDownload" class="btn small outline">↓ Export combined backup</button></div>
+        </details>
+        <div class="button-line"><button type="button" id="gitRefresh" class="btn small outline">↻ Refresh shared books</button><button type="button" id="gitDiscard" class="btn small danger outline">Discard unpublished changes</button></div>
+        <div id="gitStatus" class="notice" role="status" aria-live="polite" style="margin-top:12px">Local library only. Connect a repository to synchronize books.</div>
+        <p class="hint">Each changed book is committed separately (<code>books/book-id.json</code>). Editors can make changes to different books independently. Existing <code>books.json</code> libraries can be imported automatically and migrated by publishing. Readers receive updates on reload, Refresh, or an automatic 5-minute check. Secret draws are never synchronized.</p>
+      </section>
+      <section class="panel" aria-labelledby="playersHead">
+        <div class="panelhead"><h2 id="playersHead"><span class="step">01</span> Players</h2><span class="tag" id="playerBadge">0 players</span></div>
+        <label for="playersInput">One player name per line</label>
+        <textarea id="playersInput" spellcheck="false" autocomplete="off" placeholder="Alex&#10;Bailey&#10;Casey"></textarea>
+        <p class="hint">Each player will receive one role. Duplicate player names are not permitted.</p>
+      </section>
+      <section class="panel" aria-labelledby="rulesHead">
+        <div class="panelhead"><h2 id="rulesHead">How category counts work</h2></div>
+        <ol class="instructions">
+          <li>Select one of your books or <strong style="color:var(--accent)">Chaos Mode</strong>, then edit your categories and role lists.</li>
+          <li>Set each category's <strong style="color:var(--text)">minimum</strong> and <strong style="color:var(--text)">maximum</strong>.</li>
+          <li>Set both numbers equal to require an <strong style="color:var(--text)">exact quantity</strong>.</li>
+          <li>When there's room between minimum and maximum, extra slots are randomly assigned among eligible categories.</li>
+        </ol>
+        <p class="hint" style="margin-top:13px">Each role defaults to one copy; increase “Copies” if duplicates are allowed. Your setup and most recent draw are stored on this device where browser storage is available. Roles with the same title in different books remain separate, and each book can be renamed or replaced through the Book library.</p>
+      </section>
+      <section class="panel" aria-labelledby="manageHead">
+        <div class="panelhead"><h2 id="manageHead">Setup management</h2></div>
+        <div class="stack" style="gap:8px">
+          <button class="btn outline block" type="button" id="clearBtn">Start with a blank setup</button>
+          <button class="btn outline block" type="button" id="demoBtn">Restore the original books</button>
+        </div>
+        <p class="hint">Export a JSON backup to transfer your setup between devices. Export does not include assigned secret roles.</p>
+      </section>
+    </aside>
+    <div>
+      <section class="panel" aria-labelledby="categoriesHead">
+        <div class="panelhead"><h2 id="categoriesHead"><span class="step">02</span> Categories & roles</h2><span class="tag" id="catBadge">0 categories</span></div>
+        <div id="categoryList" class="catlist"></div>
+        <div class="addarea"><button class="btn block outline" type="button" id="addCategoryBtn">＋ Add custom category</button></div>
+      </section>
+      <section class="panel drawpanel" aria-labelledby="drawHead">
+        <div class="panelhead"><h2 id="drawHead"><span class="step">03</span> Randomize & distribute</h2></div>
+        <div id="validation" class="notice" role="status" aria-live="polite"></div>
+        <div class="drawrow"><button class="btn primary" type="button" id="drawBtn">✦ Randomize roles</button><p class="hint">Uses a random draw without reusing a role beyond its allowed copies. Every player gets exactly one role.</p></div>
+      </section>
+    </div>
+  </div>
+
+  <section id="results" class="panel results" aria-labelledby="resultsHead">
+    <div class="results-head">
+      <div><h2 id="resultsHead"><span class="step">04</span> Private role reveals</h2><p class="hint">Pass the phone to a player, tap their name, then let them reveal their own role. Hide it before passing the device back.</p></div>
+      <span class="tag" id="viewedCount"></span>
+    </div>
+    <p id="bookSummary" class="hint"></p>
+    <div id="staleWarning" class="notice error hidden" style="margin-top:12px">You changed the setup after the last draw. These assignments are from the previous setup; randomize again to apply your changes.</div>
+    <div id="people" class="people"></div>
+    <div class="hostsec">
+      <div class="spaced"><div><h3>Storyteller overview</h3><p class="hint">Hidden by default so players cannot accidentally see everyone's roles.</p></div><button class="btn small outline" type="button" id="hostBtn">Reveal all assignments</button></div>
+      <div id="hostOverview" class="hidden"></div>
+    </div>
+    <div class="spaced" style="margin-top:15px"><button type="button" id="clearDrawBtn" class="btn small danger outline">Clear this draw</button><span class="hint">Only use this if starting a new game.</span></div>
+  </section>
+  <p class="footer">ROLEFORGE · Offline/local mode still works. GitHub sync requires an internet connection and a public repository; only editors need GitHub credentials. Secret assignments are never shared.</p>
+</main>
+
+<div id="revealModal" class="modalwrap" role="dialog" aria-modal="true" aria-labelledby="modalPlayer" aria-hidden="true">
+  <div class="modal">
+    <div class="eyebrow">Private role card</div>
+    <div id="modalPlayer" class="modal-name"></div>
+    <div id="beforeReveal">
+      <p class="muted" style="margin:14px 0 26px">Make sure only this player can see the screen.</p>
+      <button type="button" class="btn primary block" id="showRoleBtn">Tap to reveal your role</button>
+    </div>
+    <div id="afterReveal" class="hidden">
+      <div id="modalRole" class="role-reveal"></div>
+      <div id="modalCategory" class="role-cat"></div>
+      <div id="modalBook" class="book-origin"></div>
+      <p id="modalDescription" class="role-description"></p>
+    </div>
+    <div class="modal-actions" style="margin-top:auto;padding-top:20px"><button type="button" class="btn block" id="hideRoleBtn">Hide & return to player list</button></div>
+  </div>
+</div>
+<script>
+(() => {
+  'use strict';
+  const KEY='roleforge-books-chaos-v3';
+  const V2_KEY='roleforge-books-chaos-v2';
+  const OLD_KEY='roleforge-custom-role-distributor-v1';
+  const $=id=>document.getElementById(id);
+  const uid=()=> 'id_'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+  const colors=['#e9b769','#83bacd','#d2a0e5','#e6a6a6','#a8d39b','#d7be83','#9da9f0'];
+  const DEFAULT_BOOKS=[{id:'keepers',name:'Keepers & Reapers'},{id:'between',name:'Between the Lines'},{id:'house',name:'Custom / House Rules'}];
+  const DEFAULT_ROLES={"keepers":{"Villager":["Bookkeeper","Crowkeeper","Firewalker","Flamekeeper","Gamekeeper","Gatekeeper","Goalkeeper","Grandmaster","Groom","Peacekeeper","Pollkeeper","Supplicant","Survivor","Timekeeper","Venator"],"Outcast":["Barkeeper","Mourner","Nymph","Troublemaker"],"Underling":["Ferryman","Nightcap","Skinwalker","Yōkai"],"Fiend":["Conductor","Lich","Reaper","Undying Lord"]},"between":{"Villager":["Admirer","Archivist","Card Reader","Diviner","Foreseer","Gatekeeper","Panhandler","Private Eye","Prophet","Scribe","Ventriloquist","Vigilante"],"Outcast":["Actor","Author","Canary","Cultist","Mourner"],"Underling":["Bibliotaph","Operator","Shyster","Tormentor"],"Fiend":["Headhunter","Magpie","Shroud"]}};
+  const esc=x=>String(x??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const n=x=>Math.min(999,Math.max(0,Math.trunc(Number(x)||0)));
+  const color=x=>/^#[0-9a-f]{6}$/i.test(String(x))?String(x):colors[0];
+  const makeRole=(name,book,description='',copies=1)=>({id:uid(),name,book,description,copies});
+  const makeCat=(name,col,min,max,roles=[])=>({id:uid(),name,color:col,min,max,roles});
+  const bookName=id=>state.books.find(b=>b.id===id)?.name||'Unknown book';
+  const validBook=id=>state.books.some(b=>b.id===id);
+  const activeBooks=()=>state.mode==='chaos'?state.chaosSelected.filter(validBook):validBook(state.mode)?[state.mode]:[];
+  const modeName=()=>state.mode==='chaos'?'Chaos Mode':bookName(state.mode);
+  const capacity=(cat,book)=>cat.roles.reduce((sum,r)=>sum+(r.name.trim() && (book?r.book===book:activeBooks().includes(r.book))?n(r.copies):0),0);
+  const relevantRoles=cat=>cat.roles.filter(r=>activeBooks().includes(r.book));
+  const players=()=>state.playersText.split(/\r?\n/).map(p=>p.trim()).filter(Boolean);
+  function builtInSetup(){
+    const categories=['Villager','Outcast','Underling','Fiend'].map((name,i)=>{
+      const roles=[];
+      for(const book of ['keepers','between']) for(const title of DEFAULT_ROLES[book][name])roles.push(makeRole(title,book));
+      const exact=[5,2,2,1][i];return makeCat(name,colors[i],exact,exact,roles);
+    });
+    return {books:DEFAULT_BOOKS.map(b=>({...b})),playersText:Array.from({length:10},(_,i)=>'Player '+(i+1)).join('\n'),mode:'keepers',chaosSelected:['keepers','between'],chaosMinimums:{keepers:1,between:1,house:0},categories,draw:null,revision:0};
+  }
+  function sanitize(input){
+    if(!input||!Array.isArray(input.categories))throw Error('This is not a valid Roleforge setup.');
+    let books=Array.isArray(input.books)?input.books.slice(0,75).map(b=>({id:String(b.id||'').slice(0,100),name:String(b.name||'').slice(0,120)})):DEFAULT_BOOKS.map(b=>({...b}));
+    books=books.filter(b=>b.id && b.name.trim());
+    const seen=new Set();books=books.filter(b=>{if(seen.has(b.id))return false;seen.add(b.id);return true;});
+    if(!books.length)books=[{id:'house',name:'Custom / House Rules'}];
+    const ids=new Set(books.map(b=>b.id));
+    const fallback=books[0].id;
+    const categories=input.categories.slice(0,120).map(c=>({
+      id:uid(),name:String(c.name??'').slice(0,150),color:color(c.color),min:n(c.min),max:n(c.max),
+      roles:(Array.isArray(c.roles)?c.roles:[]).slice(0,700).map(r=>({
+        id:uid(),name:String(r.name??'').slice(0,150),book:ids.has(r.book)?r.book:fallback,
+        copies:n(r.copies??1),description:String(r.description??'').slice(0,3000)
+      }))
+    }));
+    const mode=input.mode==='chaos'||ids.has(input.mode)?input.mode:fallback;
+    const selected=Array.isArray(input.chaosSelected)?input.chaosSelected.filter(id=>ids.has(id)):
+      ['keepers','between'].filter(id=>ids.has(id));
+    const chaosSelected=[...new Set(selected)];
+    if(!Array.isArray(input.chaosSelected)&&chaosSelected.length<2) chaosSelected.push(...books.map(b=>b.id).filter(id=>!chaosSelected.includes(id)).slice(0,2-chaosSelected.length));
+    const chaosMinimums=Object.fromEntries(books.map(b=>[b.id,n(input.chaosMinimums?.[b.id]??((b.id==='keepers'||b.id==='between')?1:0))]));
+    return {books,playersText:String(input.playersText??'').slice(0,30000),mode,chaosSelected,chaosMinimums,categories,draw:null,revision:n(input.revision)};
+  }
+  function mergeLegacy(old){
+    const base=builtInSetup(), val=sanitize(old);
+    base.playersText=val.playersText||base.playersText;
+    for(const cat of val.categories){
+      const match=base.categories.find(c=>c.name.toLocaleLowerCase()===cat.name.toLocaleLowerCase());
+      if(match) match.roles.push(...cat.roles.filter(r=>r.book==='house'));
+      else base.categories.push(cat);
+    }
+    return base;
+  }
+  function restoreDraw(val,raw){
+    if(!raw?.draw||!Array.isArray(raw.draw.assignments)||raw.draw.assignments.length>500)return val;
+    val.draw={revision:n(raw.draw.revision),mode:String(raw.draw.mode||''),
+      assignments:raw.draw.assignments.map(a=>({player:String(a.player??''),role:String(a.role??''),book:String(a.book??''),bookName:String(a.bookName||val.books.find(b=>b.id===a.book)?.name||a.book||'Custom'),category:String(a.category??''),description:String(a.description??''),color:color(a.color)})),
+      viewed:Array.isArray(raw.draw.viewed)?raw.draw.viewed.filter(Number.isInteger):[]};
+    return val;
+  }
+  function load(){
+    try{
+      const v3=localStorage.getItem(KEY);
+      if(v3){const data=JSON.parse(v3);return restoreDraw(sanitize(data),data);}
+      const v2=localStorage.getItem(V2_KEY);
+      if(v2){const data=JSON.parse(v2);return restoreDraw(sanitize(data),data);}
+      const legacy=localStorage.getItem(OLD_KEY);
+      if(legacy)return mergeLegacy(JSON.parse(legacy));
+    }catch(e){console.warn('Could not restore saved setup:',e);}
+    return builtInSetup();
+  }
+  let state=load(),hostShown=false,modalIndex=-1,lastModalFocus=null;
+  const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){console.warn('Could not save setup',e);}if(typeof updateGitStatus==='function'&&typeof gitConfig!=='undefined'&&gitConfig.owner)updateGitStatus();};
+  function randomInt(max){
+    if(max<=0)throw Error('Empty randomization range');
+    if(globalThis.crypto?.getRandomValues&&max<=0xffffffff){const out=new Uint32Array(1),limit=Math.floor(4294967296/max)*max;do{crypto.getRandomValues(out);}while(out[0]>=limit);return out[0]%max;}
+    return Math.floor(Math.random()*max);
+  }
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=randomInt(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+  // Feasible integer assignment through lower-bound circulation: books -> categories -> people.
+  function allocate(playerCount){
+    const books=activeBooks(),cats=state.categories,B=books.length,C=cats.length;
+    const source=0,sink=B+C+1,superSource=sink+1,superSink=sink+2;
+    const G=Array.from({length:superSink+1},()=>[]),balance=Array(superSink+1).fill(0);
+    function edge(u,v,cap){const f={to:v,rev:G[v].length,cap},r={to:u,rev:G[u].length,cap:0};G[u].push(f);G[v].push(r);return f;}
+    function bound(u,v,min,max){if(min>max)throw Error('Impossible role quota');balance[u]-=min;balance[v]+=min;return {min,max,edge:edge(u,v,max-min)};}
+    for(const bi of shuffle([...books.keys()])){const b=books[bi];bound(source,1+bi,state.mode==='chaos'?n(state.chaosMinimums[b]):0,playerCount);}
+    const bookCat=[],combos=[];
+    for(let bi=0;bi<B;bi++)for(let ci=0;ci<C;ci++){const cap=capacity(cats[ci],books[bi]);if(cap)combos.push({bi,ci,cap});}
+    for(const {bi,ci,cap} of shuffle(combos))bookCat.push({bi,ci,ref:bound(1+bi,1+B+ci,0,cap)});
+    for(const ci of shuffle([...cats.keys()])){const c=cats[ci];bound(1+B+ci,sink,n(c.min),Math.min(n(c.max),capacity(c)));}
+    bound(sink,source,playerCount,playerCount);
+    let required=0;
+    for(let i=0;i<=sink;i++){if(balance[i]>0){edge(superSource,i,balance[i]);required+=balance[i];}else if(balance[i]<0)edge(i,superSink,-balance[i]);}
+    let flow=0;
+    while(true){
+      const parent=Array(G.length).fill(null),queue=[superSource];parent[superSource]={node:-1};
+      for(let q=0;q<queue.length&&!parent[superSink];q++){const u=queue[q];for(let k=0;k<G[u].length;k++){const e=G[u][k];if(e.cap>0&&!parent[e.to]){parent[e.to]={node:u,index:k};queue.push(e.to);if(e.to===superSink)break;}}}
+      if(!parent[superSink])break;
+      let delta=Infinity;for(let v=superSink;v!==superSource;v=parent[v].node){const p=parent[v],e=G[p.node][p.index];delta=Math.min(delta,e.cap);}
+      for(let v=superSink;v!==superSource;v=parent[v].node){const p=parent[v],e=G[p.node][p.index];e.cap-=delta;G[v][e.rev].cap+=delta;}
+      flow+=delta;
+    }
+    if(flow!==required)return null;
+    return bookCat.map(({bi,ci,ref})=>({book:books[bi],catIndex:ci,count:ref.max-ref.edge.cap})).filter(x=>x.count>0);
+  }
+  function assess(){
+    const ps=players(),errors=[],cats=state.categories;
+    const minTotal=cats.reduce((s,c)=>s+n(c.min),0),maxTotal=cats.reduce((s,c)=>s+Math.min(n(c.max),capacity(c)),0),slots=cats.reduce((s,c)=>s+capacity(c),0);
+    if(!ps.length)errors.push('Enter at least one player.');
+    if(ps.length>500)errors.push('This tool supports up to 500 players.');
+    if(ps.length!==new Set(ps.map(p=>p.toLocaleLowerCase())).size)errors.push('Player names must be unique.');
+    if(!cats.length)errors.push('Create at least one category.');
+    if(!activeBooks().length)errors.push('Choose a book with roles, or include books in Chaos Mode.');
+    for(const cat of cats){
+      const cap=capacity(cat),name=cat.name.trim()||'Unnamed category';
+      if(!cat.name.trim()&&n(cat.max)>0)errors.push('Every active category needs a name.');
+      if(n(cat.min)>n(cat.max))errors.push(`${name}: minimum exceeds maximum.`);
+      if(n(cat.min)>cap)errors.push(`${name}: minimum ${n(cat.min)} exceeds ${cap} available role slots in ${modeName()}.`);
+    }
+    if(minTotal>ps.length)errors.push(`Category minimums total ${minTotal}, but there are only ${ps.length} players.`);
+    if(maxTotal<ps.length)errors.push(`Current book pool and category maximums allow ${maxTotal} of ${ps.length} players.`);
+    if(state.mode==='chaos'){
+      const selected=activeBooks();
+      if(selected.length<2)errors.push('Select at least two books for Chaos Mode.');
+      const minBooks=selected.reduce((s,id)=>s+n(state.chaosMinimums[id]),0);
+      if(minBooks>ps.length)errors.push(`Book minimums total ${minBooks}, exceeding ${ps.length} players.`);
+      for(const id of selected){const cap=cats.reduce((s,c)=>s+capacity(c,id),0);if(n(state.chaosMinimums[id])>cap)errors.push(`${bookName(id)} needs at least ${n(state.chaosMinimums[id])} roles, but only ${cap} are available.`);}
+    }
+    if(!errors.length&&!allocate(ps.length))errors.push('Category quotas and book minimums cannot all be satisfied. Reduce a minimum, raise a maximum, or add more eligible roles.');
+    return {ps,errors,minTotal,maxTotal,slots};
+  }
+  function bookOptions(selected){return state.books.map(b=>`<option value="${esc(b.id)}" ${b.id===selected?'selected':''}>${esc(b.name)}</option>`).join('');}
+  function roleMarkup(r){return `<div class="role" data-role="${esc(r.id)}">
+    <div><label>Role name</label><input class="input" data-role-field="name" maxlength="150" value="${esc(r.name)}" placeholder="New role"></div>
+    <div><label>Copies</label><input class="input" data-role-field="copies" type="number" min="0" max="999" inputmode="numeric" value="${n(r.copies)}" aria-label="Allowed copies of ${esc(r.name)}"></div>
+    <button type="button" class="btn iconbtn danger outline" data-action="remove-role" title="Delete role" aria-label="Delete ${esc(r.name)}">×</button>
+    <div class="role-bookline"><span class="book-tag">${esc(bookName(r.book))}</span><label class="book-move">Book <select class="input" data-role-field="book" aria-label="Book for ${esc(r.name)}">${bookOptions(r.book)}</select></label></div>
+    <div class="description-toggle"><details><summary>Optional ability description</summary><textarea class="input role-desc" data-role-field="description" maxlength="3000" placeholder="Shown privately when this role is revealed">${esc(r.description)}</textarea></details></div>
+  </div>`;}
+  function categoryMarkup(c){
+    const roles=relevantRoles(c),books=activeBooks();
+    const addChooser=state.mode==='chaos'?`<select class="input" data-book-add aria-label="Book for new role" style="max-width:190px;font-size:12px;padding:7px 8px">${books.map(id=>`<option value="${esc(id)}">${esc(bookName(id))}</option>`).join('')}</select>`:'';
+    return `<article class="catcard" data-cat="${esc(c.id)}" style="--cat-accent:${color(c.color)}">
+      <div class="cathead"><div><label>Category name</label><input class="input" data-field="name" aria-label="Category name" maxlength="150" value="${esc(c.name)}" placeholder="Category"></div><button type="button" class="btn iconbtn danger outline" data-action="remove-category" aria-label="Delete ${esc(c.name)}">×</button></div>
+      <div class="cattop"><div><label>Category color</label><input data-field="color" type="color" aria-label="Category color" value="${color(c.color)}" style="height:39px;width:100%;background:transparent;border:0;cursor:pointer"></div><div><label>Eligible role slots</label><div class="notice cap-display" style="padding:7px;text-align:center;font-variant-numeric:tabular-nums"><strong>${capacity(c)}</strong></div></div></div>
+      <div class="quota"><div><label>Minimum</label><input class="input" data-field="min" type="number" inputmode="numeric" min="0" max="999" step="1" value="${c.min}" aria-label="Minimum ${esc(c.name)} roles"></div><div><label>Maximum</label><input class="input" data-field="max" type="number" inputmode="numeric" min="0" max="999" step="1" value="${c.max}" aria-label="Maximum ${esc(c.name)} roles"></div></div>
+      <details class="roles-details"><summary class="roles-summary">Edit ${roles.length} eligible role${roles.length===1?'':'s'} in ${esc(modeName())}</summary>
+        <div class="roles-top"><span class="roletitle">Role library</span><div class="addbuttons">${addChooser}<button type="button" class="btn small outline" data-action="add-role">＋ Add role</button></div></div>
+        <div class="rolelist">${roles.map(roleMarkup).join('')}</div>
+        ${!roles.length?'<p class="hint">No eligible roles in this category. Add one or import a book.</p>':''}
+      </details>
+      <div class="catfoot">Exact quantity: set minimum and maximum equal. Open “Edit roles” to change titles and descriptions.</div>
+    </article>`;
+  }
+  function renderCategories(){$('categoryList').innerHTML=state.categories.map(categoryMarkup).join('')||'<div class="notice">No categories. Add one or import a book.</div>';}
+  function renderMode(){
+    $('modeButtons').innerHTML=state.books.map(b=>`<button type="button" class="mode-btn ${state.mode===b.id?'selected':''}" data-mode="${esc(b.id)}" aria-pressed="${state.mode===b.id}"><span>${esc(b.name)}</span><small>Single-book draw</small></button>`).join('')+
+      `<button type="button" class="mode-btn chaos ${state.mode==='chaos'?'selected':''}" data-mode="chaos" aria-pressed="${state.mode==='chaos'}"><span>⚡ Chaos Mode</span><small>Mix selected books</small></button>`;
+    $('chaosConfig').classList.toggle('hidden',state.mode!=='chaos');
+    $('selectedBook').textContent=modeName();
+    $('modeHint').textContent=state.mode==='chaos'?'Draw from all checked books; set per-book minimums below to guarantee representation.':'Only roles from '+bookName(state.mode)+' are eligible. Manage or replace books in the Book library.';
+    $('chaosBookList').innerHTML=state.books.map(b=>`<div class="chaos-book-row"><label><input type="checkbox" data-chaos-book="${esc(b.id)}" ${state.chaosSelected.includes(b.id)?'checked':''}><span>${esc(b.name)}</span></label><div><label for="min-${esc(b.id)}" style="font-size:11px">Min roles</label><input id="min-${esc(b.id)}" class="input" type="number" inputmode="numeric" min="0" max="999" data-chaos-min="${esc(b.id)}" value="${n(state.chaosMinimums[b.id])}" ${state.chaosSelected.includes(b.id)?'':'disabled'}></div></div>`).join('');
+  }
+  function renderEditorSelect(selected){
+    const sel=$('editBookSelect');sel.innerHTML=state.books.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
+    sel.value=validBook(selected)?selected:state.books[0]?.id||'';
+    populateBookEditor();
+  }
+  function bookToText(id){
+    const sections=state.categories.map(c=>({name:c.name,roles:c.roles.filter(r=>r.book===id&&r.name.trim())})).filter(x=>x.roles.length);
+    return sections.map(s=>s.name+'\n'+s.roles.map(r=>'• '+r.name.trim()).join('\n')).join('\n\n');
+  }
+  function populateBookEditor(){
+    const id=$('editBookSelect').value;
+    $('editBookName').value=bookName(id);
+    $('editBookText').value=bookToText(id);
+    $('bookMessage').textContent='';
+  }
+  function refresh(){
+    const a=assess();
+    $('playersStat').textContent=a.ps.length;$('rolesStat').textContent=a.slots;$('minStat').textContent=a.minTotal;$('maxStat').textContent=a.maxTotal;
+    $('playerBadge').textContent=`${a.ps.length} player${a.ps.length===1?'':'s'}`;
+    $('catBadge').textContent=`${state.categories.length} categor${state.categories.length===1?'y':'ies'}`;
+    $('drawBtn').disabled=Boolean(a.errors.length);
+    if(a.errors.length){$('validation').className='notice error';$('validation').innerHTML='<strong>Fix these before drawing:</strong><ul>'+a.errors.map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul>';}
+    else{$('validation').className='notice success';$('validation').textContent=`Ready: ${a.ps.length} players, ${modeName()}. Category minimums total ${a.minTotal}; maximum capacity ${a.maxTotal}.`;}
+    renderResults();
+  }
+  function changed(){state.revision++;persist();refresh();}
+  function makeDraw(){
+    const a=assess();if(a.errors.length){refresh();return;}
+    if(state.draw&&!confirm('Replace the existing secret assignments with a new draw?'))return;
+    let selected=null;
+    for(let attempt=0;attempt<250&&!selected;attempt++){
+      const targets=state.categories.map(c=>n(c.min));
+      const free=state.categories.map((c,i)=>Math.max(0,Math.min(n(c.max),capacity(c))-targets[i]));
+      let remaining=a.ps.length-a.minTotal;
+      while(remaining>0){const total=free.reduce((s,v)=>s+v,0);let pick=randomInt(total);for(let i=0;i<free.length;i++){pick-=free[i];if(pick<0){targets[i]++;free[i]--;break;}}remaining--;}
+      const trial=[];
+      state.categories.forEach((cat,i)=>{
+        const bag=[];
+        for(const r of relevantRoles(cat)){if(!r.name.trim())continue;for(let j=0;j<n(r.copies);j++)bag.push({role:r.name.trim(),category:cat.name.trim(),book:r.book,bookName:bookName(r.book),color:color(cat.color),description:r.description});}
+        shuffle(bag);trial.push(...bag.slice(0,targets[i]));
+      });
+      if(state.mode==='chaos'&&activeBooks().some(b=>trial.filter(x=>x.book===b).length<n(state.chaosMinimums[b])))continue;
+      selected=trial;
+    }
+    if(!selected){
+      const allocations=allocate(a.ps.length);if(!allocations){alert('No valid assignment satisfies the quotas.');return;}
+      selected=[];
+      for(const {book,catIndex,count} of allocations){const cat=state.categories[catIndex],bag=[];
+        for(const r of cat.roles){if(r.book!==book||!r.name.trim())continue;for(let k=0;k<n(r.copies);k++)bag.push({role:r.name.trim(),category:cat.name.trim(),book,bookName:bookName(book),color:color(cat.color),description:r.description});}
+        shuffle(bag);selected.push(...bag.slice(0,count));
+      }
+    }
+    if(selected.length!==a.ps.length){alert('Unable to complete this draw. Recheck the category settings.');return;}
+    shuffle(selected);
+    state.draw={revision:state.revision,mode:state.mode,assignments:a.ps.map((player,i)=>({player,...selected[i]})),viewed:[]};
+    hostShown=false;persist();refresh();$('results').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function renderResults(){
+    const draw=state.draw,hasDraw=Boolean(draw?.assignments?.length);
+    $('results').classList.toggle('visible',hasDraw);if(!hasDraw)return;
+    const as=draw.assignments,viewed=new Set(draw.viewed);
+    $('staleWarning').classList.toggle('hidden',draw.revision===state.revision);
+    $('viewedCount').textContent=`${viewed.size} of ${as.length} viewed`;
+    const byBook=new Map();as.forEach(a=>{const name=a.bookName||bookName(a.book);byBook.set(name,(byBook.get(name)||0)+1);});
+    $('bookSummary').textContent=`${draw.mode==='chaos'?'Chaos Mode':as[0]?.bookName||'Saved draw'} · ${[...byBook].map(([name,count])=>`${name}: ${count}`).join(' · ')}`;
+    $('people').innerHTML=as.map((a,i)=>`<div class="person"><div><div class="person-name">${esc(a.player)}</div>${viewed.has(i)?'<div class="viewed">✓ Viewed</div>':''}</div><button type="button" class="btn small" data-open="${i}">Open card</button></div>`).join('');
+    $('hostBtn').textContent=hostShown?'Hide assignments':'Reveal all assignments';
+    $('hostOverview').classList.toggle('hidden',!hostShown);
+    $('hostOverview').innerHTML=hostShown?`<div style="overflow-x:auto"><table class="hosttable"><thead><tr><th>Player</th><th>Role</th><th>Category</th><th>Book</th></tr></thead><tbody>${as.map(a=>`<tr><td>${esc(a.player)}</td><td>${esc(a.role)}</td><td><span class="colorpill" style="color:${color(a.color)}">${esc(a.category)}</span></td><td>${esc(a.bookName||bookName(a.book))}</td></tr>`).join('')}</tbody></table></div>`:'';
+  }
+  function openModal(i){if(!state.draw?.assignments[i])return;lastModalFocus=document.activeElement;modalIndex=i;$('modalPlayer').textContent=state.draw.assignments[i].player;$('beforeReveal').classList.remove('hidden');$('afterReveal').classList.add('hidden');$('revealModal').classList.add('open');$('revealModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('showRoleBtn').focus();}
+  function reveal(){if(modalIndex<0||!state.draw)return;const a=state.draw.assignments[modalIndex];$('modalRole').textContent=a.role;$('modalCategory').textContent=a.category;$('modalCategory').style.color=color(a.color);$('modalBook').textContent=a.bookName||bookName(a.book);$('modalDescription').textContent=a.description||'';$('modalDescription').classList.toggle('hidden',!a.description);$('beforeReveal').classList.add('hidden');$('afterReveal').classList.remove('hidden');if(!state.draw.viewed.includes(modalIndex))state.draw.viewed.push(modalIndex);persist();$('hideRoleBtn').focus();}
+  function closeModal(){$('revealModal').classList.remove('open');$('revealModal').setAttribute('aria-hidden','true');document.body.style.overflow='';modalIndex=-1;$('afterReveal').classList.add('hidden');$('modalRole').textContent='';$('modalDescription').textContent='';renderResults();if(lastModalFocus?.isConnected)lastModalFocus.focus();}
+  function download(name,data,type){const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);}
+  function downloadSetup(){const data={format:'Roleforge setup',version:3,books:state.books,mode:state.mode,chaosSelected:state.chaosSelected,chaosMinimums:state.chaosMinimums,playersText:state.playersText,categories:state.categories.map(c=>({name:c.name,color:c.color,min:c.min,max:c.max,roles:c.roles.map(r=>({name:r.name,book:r.book,copies:r.copies,description:r.description}))}))};download('roleforge-books-setup.json',JSON.stringify(data,null,2),'application/json');}
+  async function importSetup(file){if(!file)return;try{if(state.draw&&!confirm('Importing replaces the current setup and secret assignments. Continue?'))return;const raw=JSON.parse(await file.text());state=raw.version===1||!raw.mode?mergeLegacy(raw):sanitize(raw);hostShown=false;persist();renderAll();alert('Book setup imported successfully.');}catch(e){alert('Could not import the file: '+e.message);}}
+  // Import Word-style sections: heading, followed by bullet-prefixed roles.
+  // Supports headings with colon / Markdown #, and blank-separated unbulleted sections.
+  function parseRoleText(raw){
+    const rows=String(raw??'').replace(/\u00a0/g,' ').split(/\r?\n/).map((line,i)=>({line:line.trim(),lineNo:i+1}));
+    const sections=[],known=new Set(state.categories.map(c=>c.name.toLocaleLowerCase()));
+    let section=null,pendingBlank=true;
+    const cleaned=s=>s.replace(/^(?:[•●▪◦‣*+-]\s+|\d+[.)]\s+)/u,'').trim();
+    for(let i=0;i<rows.length;i++){
+      const {line,lineNo}=rows[i];if(!line){pendingBlank=true;continue;}
+      const bullet=/^(?:[•●▪◦‣*+-]\s+|\d+[.)]\s+)/u.test(line);
+      const headingTagged=/^#{1,6}\s+/.test(line)||/:$/.test(line)||/^\[(.+)\]$/.test(line);
+      const title=line.replace(/^#{1,6}\s+/,'').replace(/^\[(.*)\]$/,'$1').replace(/:$/,'').trim();
+      const next=rows.slice(i+1).find(x=>x.line)?.line||'';
+      const nextBullet=/^(?:[•●▪◦‣*+-]\s+|\d+[.)]\s+)/u.test(next);
+      const isHeading=!bullet&&(headingTagged||(!section)||known.has(title.toLocaleLowerCase())||(pendingBlank&&Boolean(next)));
+      if(isHeading){if(!title)throw Error(`Category name missing at line ${lineNo}.`);section={name:title,roles:[]};sections.push(section);pendingBlank=false;continue;}
+      if(!section)throw Error(`Role on line ${lineNo} has no category heading.`);
+      const name=cleaned(line);if(name) section.roles.push(name);
+      pendingBlank=false;
+    }
+    const valid=sections.filter(s=>s.roles.length);
+    if(!valid.length)throw Error('No roles found. Use a category heading followed by role names or bullet lines.');
+    if(valid.length>120||valid.reduce((sum,s)=>sum+s.roles.length,0)>3500)throw Error('Too many roles/categories in one import.');
+    const dedup=new Map();
+    for(const s of valid){const key=s.name.toLocaleLowerCase();if(!dedup.has(key))dedup.set(key,{name:s.name,roles:[]});const o=dedup.get(key),seen=new Set(o.roles.map(t=>t.toLocaleLowerCase()));for(const name of s.roles){const keyR=name.toLocaleLowerCase();if(!seen.has(keyR)){o.roles.push(name.slice(0,150));seen.add(keyR);}}}
+    return [...dedup.values()];
+  }
+  async function readWord(file){
+    if(file.size>3_000_000)throw Error('Word file exceeds 3 MB. Try pasting the role list instead.');
+    const buffer=await file.arrayBuffer(),v=new DataView(buffer);let eocd=-1;
+    for(let i=buffer.byteLength-22;i>=Math.max(0,buffer.byteLength-66000);i--){if(v.getUint32(i,true)===0x06054b50){eocd=i;break;}}
+    if(eocd<0)throw Error('Not a valid DOCX/ZIP document.');
+    let pos=v.getUint32(eocd+16,true),count=v.getUint16(eocd+10,true),entry=null;
+    const td=new TextDecoder();
+    for(let i=0;i<count;i++){
+      if(v.getUint32(pos,true)!==0x02014b50)throw Error('Invalid DOCX ZIP directory.');
+      const method=v.getUint16(pos+10,true),compressed=v.getUint32(pos+20,true),filenameLen=v.getUint16(pos+28,true),extraLen=v.getUint16(pos+30,true),commentLen=v.getUint16(pos+32,true),offset=v.getUint32(pos+42,true);
+      const filename=td.decode(new Uint8Array(buffer,pos+46,filenameLen));
+      if(filename==='word/document.xml'){entry={method,compressed,offset};break;}
+      pos+=46+filenameLen+extraLen+commentLen;
+    }
+    if(!entry)throw Error('Word document content was not found.');
+    const off=entry.offset;if(v.getUint32(off,true)!==0x04034b50)throw Error('Invalid DOCX content header.');
+    const dataOff=off+30+v.getUint16(off+26,true)+v.getUint16(off+28,true);
+    if(dataOff+entry.compressed>buffer.byteLength)throw Error('DOCX file is incomplete.');
+    const zipped=new Uint8Array(buffer,dataOff,entry.compressed);let bytes;
+    if(entry.method===0)bytes=zipped;
+    else if(entry.method===8){
+      if(typeof DecompressionStream==='undefined')throw Error('Your browser cannot read Word files offline. Copy the text from Word and paste it here, or use a .txt file.');
+      try{const stream=new Blob([zipped]).stream().pipeThrough(new DecompressionStream('deflate-raw'));bytes=new Uint8Array(await new Response(stream).arrayBuffer());}
+      catch(e){throw Error('Word decompression is unavailable in this browser. Paste the role list instead.');}
+    }else throw Error('Unsupported DOCX compression method.');
+    const doc=new DOMParser().parseFromString(td.decode(bytes),'application/xml');
+    if(doc.getElementsByTagName('parsererror').length)throw Error('Could not read the Word document XML.');
+    const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main',paragraphs=[...doc.getElementsByTagNameNS(W,'p')];
+    const lines=[];
+    for(const p of paragraphs){const text=[...p.getElementsByTagNameNS(W,'t')].map(x=>x.textContent).join('').trim();if(!text){lines.push('');continue;}
+      const props=p.getElementsByTagNameNS(W,'pPr')[0],isBullet=props&&props.getElementsByTagNameNS(W,'numPr').length>0;
+      lines.push(isBullet?'• '+text:text);
+    }
+    return lines.join('\n');
+  }
+  async function readBookFile(file){if(!file)return '';const ext=file.name.split('.').pop().toLocaleLowerCase();if(ext==='docx')return readWord(file);if(ext==='txt')return file.text();throw Error('Choose a .txt or .docx file.');}
+  async function uploadBookFile(file,target){if(!file)return;try{const val=await readBookFile(file);parseRoleText(val);$(target).value=val;$('bookMessage').textContent='Loaded '+file.name+'. Review the text, then click Create book or Save & replace.';}catch(e){$('bookMessage').textContent=e.message;alert(e.message);}}
+  function applyBookText(bookId,parsed,replace){
+    const seenCat=new Set(),seenRoles=new Map();let total=0;
+    for(const section of parsed){
+      const key=section.name.toLocaleLowerCase();let cat=state.categories.find(c=>c.name.toLocaleLowerCase()===key);
+      if(!cat){cat=makeCat(section.name,colors[state.categories.length%colors.length],0,0,[]);state.categories.push(cat);}
+      seenCat.add(cat.id);
+      const existing=cat.roles.filter(r=>r.book===bookId),existingByName=new Map(existing.map(r=>[r.name.trim().toLocaleLowerCase(),r]));
+      const count=seenRoles.get(cat.id)||new Set();
+      for(const roleName of section.roles){const norm=roleName.trim().toLocaleLowerCase();if(count.has(norm))continue;count.add(norm);
+        const r=existingByName.get(norm);if(!r)cat.roles.push(makeRole(roleName,bookId));total++;
+      }
+      seenRoles.set(cat.id,count);
+    }
+    if(replace){for(const cat of state.categories){const names=seenRoles.get(cat.id)||new Set();cat.roles=cat.roles.filter(r=>r.book!==bookId||names.has(r.name.trim().toLocaleLowerCase()));}}
+    return total;
+  }
+  function createBook(){
+    const name=$('newBookName').value.trim(),txt=$('newBookText').value;
+    if(!name){alert('Enter a book title.');$('newBookName').focus();return;}
+    if(state.books.some(b=>b.name.toLocaleLowerCase()===name.toLocaleLowerCase())){alert('A book with that title already exists. Use Modify an existing book to update it.');return;}
+    if(state.books.length>=75){alert('Maximum 75 books.');return;}
+    let sections=[];try{if(txt.trim())sections=parseRoleText(txt);}catch(e){alert(e.message);return;}
+    const id=uid();state.books.push({id,name:name.slice(0,120)});state.chaosMinimums[id]=0;state.chaosSelected.push(id);
+    const total=sections.length?applyBookText(id,sections,false):0;
+    state.mode=id;state.revision++;persist();renderAll(id);$('newBookName').value='';$('newBookText').value='';
+    $('bookManager').open=true;
+    $('bookMessage').textContent=`Created ${name} with ${total} roles. New categories start with min/max 0; configure their quotas before drawing.`;
+  }
+  function saveBook(merge){
+    const id=$('editBookSelect').value,b=state.books.find(b=>b.id===id);if(!b)return;
+    const name=$('editBookName').value.trim(),txt=$('editBookText').value;
+    if(!name){alert('Book title cannot be blank.');return;}
+    if(state.books.some(other=>other.id!==id&&other.name.toLocaleLowerCase()===name.toLocaleLowerCase())){alert('Another book already has that title.');return;}
+    let parsed=[];try{if(txt.trim())parsed=parseRoleText(txt);else if(merge){alert('Enter roles to add.');return;}}catch(e){alert(e.message);return;}
+    if(!merge&&!txt.trim()&&!confirm('This role list is empty. Remove all roles from this book?'))return;
+    if(!merge){const currently=state.categories.reduce((s,c)=>s+c.roles.filter(r=>r.book===id).length,0);if(currently>0&&!confirm('Replace the role list for "'+b.name+'"? Titles omitted from the text will be removed from this book.'))return;}
+    b.name=name.slice(0,120);
+    const added=applyBookText(id,parsed,!merge);state.revision++;persist();renderAll(id);$('bookManager').open=true;
+    $('bookMessage').textContent=merge?`Updated ${name}; ${added} new role titles added.`:`Saved ${name}; role list replaced (${parsed.reduce((s,x)=>s+x.roles.length,0)} titles).`;
+  }
+  function deleteBook(){
+    const id=$('editBookSelect').value,b=state.books.find(b=>b.id===id);if(!b)return;
+    if(!confirm(`Permanently remove the book "${b.name}" and its roles from this setup? Export a backup first if needed.`))return;
+    state.books=state.books.filter(x=>x.id!==id);for(const c of state.categories)c.roles=c.roles.filter(r=>r.book!==id);
+    state.chaosSelected=state.chaosSelected.filter(x=>x!==id);delete state.chaosMinimums[id];
+    if(!state.books.length){const replacement=uid();state.books=[{id:replacement,name:'My Book'}];state.chaosMinimums[replacement]=0;}
+    if(state.mode===id)state.mode=state.books[0].id;
+    state.revision++;persist();renderAll();$('bookManager').open=true;$('bookMessage').textContent=`Deleted ${b.name}.`;
+  }
+  function renderAll(editorId){$('playersInput').value=state.playersText;renderMode();renderCategories();renderEditorSelect(editorId);refresh();}
+  // Interactions
+  $('playersInput').addEventListener('input',e=>{state.playersText=e.target.value;changed();});
+  $('modeButtons').addEventListener('click',e=>{const btn=e.target.closest('[data-mode]');if(!btn||btn.dataset.mode===state.mode)return;state.mode=btn.dataset.mode;state.revision++;persist();renderMode();renderCategories();refresh();});
+  $('chaosBookList').addEventListener('change',e=>{const id=e.target.dataset.chaosBook;if(!id||!validBook(id))return;if(e.target.checked&&!state.chaosSelected.includes(id))state.chaosSelected.push(id);else if(!e.target.checked)state.chaosSelected=state.chaosSelected.filter(b=>b!==id);state.revision++;persist();renderMode();renderCategories();refresh();});
+  $('chaosBookList').addEventListener('input',e=>{const id=e.target.dataset.chaosMin;if(!id||!validBook(id))return;state.chaosMinimums[id]=n(e.target.value);changed();});
+  $('categoryList').addEventListener('input',e=>{
+    const catEl=e.target.closest('[data-cat]');if(!catEl)return;const cat=state.categories.find(x=>x.id===catEl.dataset.cat);if(!cat)return;
+    const rf=e.target.dataset.roleField,field=e.target.dataset.field;
+    if(rf){const roleEl=e.target.closest('[data-role]'),r=cat.roles.find(x=>x.id===roleEl?.dataset.role);if(!r||rf==='book')return;r[rf]=rf==='copies'?n(e.target.value):e.target.value;}
+    else if(field)cat[field]=['min','max'].includes(field)?n(e.target.value):field==='color'?color(e.target.value):e.target.value;
+    else return;
+    const cap=catEl.querySelector('.cap-display strong');if(cap)cap.textContent=capacity(cat);
+    if(field==='color')catEl.style.setProperty('--cat-accent',cat.color);
+    changed();
+  });
+  $('categoryList').addEventListener('change',e=>{
+    if(e.target.dataset.roleField!=='book')return;const catEl=e.target.closest('[data-cat]'),cat=state.categories.find(x=>x.id===catEl?.dataset.cat),roleEl=e.target.closest('[data-role]'),r=cat?.roles.find(x=>x.id===roleEl?.dataset.role);
+    if(!r||!validBook(e.target.value))return;r.book=e.target.value;state.revision++;persist();renderCategories();refresh();
+  });
+  $('categoryList').addEventListener('click',e=>{
+    const btn=e.target.closest('[data-action]');if(!btn)return;
+    const el=btn.closest('[data-cat]'),cat=state.categories.find(x=>x.id===el?.dataset.cat);if(!cat)return;
+    const act=btn.dataset.action;
+    if(act==='add-role'){
+      const book=state.mode==='chaos'?(el.querySelector('[data-book-add]')?.value||activeBooks()[0]):state.mode;
+      if(!validBook(book)){alert('Select a book first.');return;}cat.roles.push(makeRole('',book));
+    }else if(act==='remove-role'){const id=btn.closest('[data-role]')?.dataset.role;cat.roles=cat.roles.filter(r=>r.id!==id);}
+    else if(act==='remove-category'){if(!confirm(`Delete category "${cat.name||'Unnamed'}" and roles from ALL books?`))return;state.categories=state.categories.filter(c=>c.id!==cat.id);}
+    else return;
+    state.revision++;persist();renderCategories();refresh();
+    if(act==='add-role'){const refreshed=[...document.querySelectorAll('[data-cat]')].find(e=>e.dataset.cat===cat.id),details=refreshed?.querySelector('.roles-details');if(details)details.open=true;const names=refreshed?.querySelectorAll('[data-role-field="name"]');if(names?.length){names[names.length-1].scrollIntoView({block:'nearest'});names[names.length-1].focus();}}
+  });
+  $('addCategoryBtn').addEventListener('click',()=>{const b=state.mode==='chaos'?activeBooks()[0]:state.mode;if(!validBook(b)){alert('Choose a book first.');return;}const cat=makeCat('New category',colors[state.categories.length%colors.length],0,0,[makeRole('',b)]);state.categories.push(cat);state.revision++;persist();renderCategories();refresh();const el=[...document.querySelectorAll('[data-cat]')].find(e=>e.dataset.cat===cat.id);el?.scrollIntoView({behavior:'smooth',block:'nearest'});el?.querySelector('[data-field=name]')?.focus();});
+  $('drawBtn').addEventListener('click',makeDraw);
+  $('people').addEventListener('click',e=>{const btn=e.target.closest('[data-open]');if(btn)openModal(Number(btn.dataset.open));});
+  $('showRoleBtn').addEventListener('click',reveal);$('hideRoleBtn').addEventListener('click',closeModal);
+  $('revealModal').addEventListener('click',e=>{if(e.target===$('revealModal'))closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalIndex>=0){e.preventDefault();closeModal();}});
+  $('hostBtn').addEventListener('click',()=>{if(!hostShown&&!confirm('Reveal ALL players\' secret roles? Make sure players cannot see this screen.'))return;hostShown=!hostShown;renderResults();});
+  $('clearDrawBtn').addEventListener('click',()=>{if(!confirm('Clear all current secret assignments?'))return;state.draw=null;hostShown=false;persist();refresh();});
+  $('exportBtn').addEventListener('click',downloadSetup);$('importBtn').addEventListener('click',()=>$('importFile').click());
+  $('importFile').addEventListener('change',async e=>{await importSetup(e.target.files?.[0]);e.target.value='';});
+  $('clearBtn').addEventListener('click',()=>{if(!confirm('Clear all roles, books, categories and assignments? Export a backup first.'))return;state={books:[{id:'house',name:'My Book'}],playersText:'',mode:'house',chaosSelected:[],chaosMinimums:{house:0},categories:[],draw:null,revision:0};hostShown=false;persist();renderAll();});
+  $('demoBtn').addEventListener('click',()=>{if(!confirm('Restore the two original books and default quotas? This replaces your current setup and secret assignments. Export a backup first if needed.'))return;state=builtInSetup();hostShown=false;persist();renderAll();});
+  $('newBookUploadBtn').addEventListener('click',()=>$('newBookFile').click());
+  $('editBookUploadBtn').addEventListener('click',()=>$('editBookFile').click());
+  $('newBookFile').addEventListener('change',async e=>{await uploadBookFile(e.target.files?.[0],'newBookText');e.target.value='';});
+  $('editBookFile').addEventListener('change',async e=>{await uploadBookFile(e.target.files?.[0],'editBookText');e.target.value='';});
+  $('addBookBtn').addEventListener('click',createBook);
+  $('editBookSelect').addEventListener('change',populateBookEditor);
+  $('saveBookBtn').addEventListener('click',()=>saveBook(false));
+  $('mergeBookBtn').addEventListener('click',()=>saveBook(true));
+  $('deleteBookBtn').addEventListener('click',deleteBook);
+  $('downloadBookBtn').addEventListener('click',()=>{const id=$('editBookSelect').value,name=bookName(id).replace(/[^\p{L}\p{N}_-]+/gu,'_').slice(0,70)||'book';download(name+'.txt',bookToText(id),'text/plain;charset=utf-8');});
+
+  // --- GitHub shared book folder: ONE FILE AND ONE COMMIT PER CHANGED BOOK ---
+  const GIT_KEY='roleforge-github-per-book-v2';
+  const GIT_INTERVAL_MS=5*60*1000;
+  const DEFAULT_GIT={owner:'',repo:'',branch:'main',path:'books'};
+  let gitConfig={...DEFAULT_GIT},syncedBooks=null,gitBookShas={},gitBusy=false,gitLastCheck=0,gitLegacy=false;
+  let gitMessage='',gitError=false;
+  const gitFields=()=>({owner:$('gitOwner').value.trim(),repo:$('gitRepo').value.trim(),branch:$('gitBranch').value.trim()||'main',path:$('gitPath').value.trim()||'books'});
+  function validateGitConfig(cfg){
+    if(!/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(cfg.owner))throw Error('Enter a valid GitHub username or organization.');
+    if(!/^[a-z\d_.-]{1,100}$/i.test(cfg.repo)||cfg.repo==='.'||cfg.repo==='..')throw Error('Enter a valid repository name.');
+    if(!cfg.branch||cfg.branch.startsWith('/')||cfg.branch.endsWith('/')||cfg.branch.includes('..')||/[~^:?*\[\\\s]/.test(cfg.branch))throw Error('Enter a valid Git branch name.');
+    if(!/^[a-z\d_.-]+(?:\/[a-z\d_.-]+)*$/i.test(cfg.path)||cfg.path.split('/').some(x=>x==='.'||x==='..')||cfg.path.length>180)throw Error('Books folder must be a relative folder path, e.g. books.');
+    return cfg;
+  }
+  function catalog(){
+    return {schemaVersion:1,books:state.books.map(b=>({id:b.id,name:b.name})),
+      categories:state.categories.map(c=>({name:c.name,color:c.color,
+        roles:c.roles.filter(r=>r.name.trim()).map(r=>({book:r.book,name:r.name.trim(),copies:n(r.copies),description:r.description||''}))
+      }))};
+  }
+  // Legacy combined catalog is read only to migrate an existing books.json installation.
+  function normalizeCatalog(obj){
+    if(!obj||obj.schemaVersion!==1||!Array.isArray(obj.books)||!Array.isArray(obj.categories))throw Error('Legacy books.json is not a Roleforge library.');
+    if(obj.books.length>75||obj.categories.length>120)throw Error('Legacy book library exceeds supported limits.');
+    const seen=new Set(),bs=obj.books.map(b=>{
+      if(!b||typeof b.id!=='string'||!/^[-\w]{1,100}$/.test(b.id)||typeof b.name!=='string'||!b.name.trim()||b.name.length>120)throw Error('Invalid book ID or title in legacy books.json.');
+      if(seen.has(b.id))throw Error('Duplicate book IDs in legacy books.json.');seen.add(b.id);
+      return {id:b.id,name:b.name};
+    });
+    const cs=obj.categories.map(c=>{
+      if(!c||typeof c.name!=='string'||!c.name.trim()||c.name.length>150||!Array.isArray(c.roles)||c.roles.length>700)throw Error('Invalid category in legacy books.json.');
+      return {name:c.name,color:color(c.color),roles:c.roles.map(r=>{
+        if(!r||!seen.has(r.book)||typeof r.name!=='string'||!r.name.trim()||r.name.length>150)throw Error('Invalid role in legacy books.json.');
+        return {book:r.book,name:r.name,copies:n(r.copies??1),description:String(r.description||'').slice(0,3000)};
+      })};
+    });
+    return {schemaVersion:1,books:bs,categories:cs};
+  }
+  const catalogText=()=>JSON.stringify(normalizeCatalog(catalog()),null,2)+'\n';
+  function normalizeBook(obj,expectedId=null){
+    if(!obj||obj.schemaVersion!==2||typeof obj.id!=='string'||!/^[-\w]{1,100}$/.test(obj.id))throw Error('Invalid book file: expected schemaVersion 2 and a safe book ID.');
+    if(expectedId&&obj.id!==expectedId)throw Error('Book file ID does not match its filename: '+expectedId+'.json');
+    if(typeof obj.name!=='string'||!obj.name.trim()||obj.name.length>120)throw Error('Invalid book name in '+obj.id+'.json');
+    if(!Array.isArray(obj.categories)||obj.categories.length>120)throw Error('Invalid categories in '+obj.id+'.json');
+    let total=0;const seenCats=new Set();
+    const cats=obj.categories.map(cat=>{
+      if(!cat||typeof cat.name!=='string'||!cat.name.trim()||cat.name.length>150||!Array.isArray(cat.roles)||cat.roles.length>700)throw Error('Invalid category in '+obj.id+'.json');
+      const key=cat.name.trim().toLocaleLowerCase();if(seenCats.has(key))throw Error('Duplicate category in '+obj.id+'.json');seenCats.add(key);
+      const roles=cat.roles.map(r=>{
+        if(!r||typeof r.name!=='string'||!r.name.trim()||r.name.length>150)throw Error('Invalid role in '+obj.id+'.json');
+        total++;return {name:r.name.trim(),copies:n(r.copies??1),description:String(r.description||'').slice(0,3000)};
+      });
+      return {name:cat.name.trim(),color:color(cat.color),roles};
+    });
+    if(total>10000)throw Error('Too many roles in '+obj.id+'.json');
+    return {schemaVersion:2,id:obj.id,name:obj.name.trim(),categories:cats};
+  }
+  function booksFromCatalog(lib){
+    const catalog=normalizeCatalog(lib),out={};
+    for(const b of catalog.books){
+      const categories=catalog.categories.map(c=>({name:c.name,color:c.color,
+        roles:c.roles.filter(r=>r.book===b.id).map(r=>({name:r.name,copies:r.copies,description:r.description}))
+      })).filter(c=>c.roles.length);
+      out[b.id]=normalizeBook({schemaVersion:2,id:b.id,name:b.name,categories});
+    }
+    return out;
+  }
+  function booksFromState(){return booksFromCatalog(catalog());}
+  function catalogFromBooks(map){
+    const ids=Object.keys(map),priority={'keepers':0,'between':1,'house':2};
+    ids.sort((a,b)=>(priority[a]??99)-(priority[b]??99)||String(map[a].name).localeCompare(map[b].name));
+    const books=[],categories=[],catMap=new Map();
+    for(const id of ids){
+      const b=normalizeBook(map[id],id);books.push({id:b.id,name:b.name});
+      for(const c of b.categories){
+        const key=c.name.toLocaleLowerCase();let target=catMap.get(key);
+        if(!target){target={name:c.name,color:c.color,roles:[]};catMap.set(key,target);categories.push(target);}
+        target.roles.push(...c.roles.map(r=>({...r,book:id})));
+      }
+    }
+    return {schemaVersion:1,books,categories};
+  }
+  const contentEqual=(a,b)=>JSON.stringify(a??null)===JSON.stringify(b??null);
+  function sameBookMaps(a,b){
+    const aa=Object.keys(a).sort(),bb=Object.keys(b).sort();
+    return aa.length===bb.length&&aa.every((id,i)=>id===bb[i]&&contentEqual(a[id],b[id]));
+  }
+  function dirtyBookIds(){
+    if(syncedBooks===null)return [];
+    const current=booksFromState();
+    return [...new Set([...Object.keys(current),...Object.keys(syncedBooks)])].filter(id=>!contentEqual(current[id],syncedBooks[id]));
+  }
+  const isBookDirty=()=>dirtyBookIds().length>0;
+  function setGitStatus(message,error=false){gitMessage=message;gitError=error;updateGitStatus();}
+  function updateGitStatus(){
+    const connected=Boolean(gitConfig.owner&&gitConfig.repo),dirty=connected?dirtyBookIds():[],status=$('gitStatus');
+    $('gitBadge').textContent=connected?(dirty.length?'Unpublished: '+dirty.length+' book'+(dirty.length===1?'':'s'):syncedBooks?'Connected':'Configured'):'Local only';
+    status.className='notice'+(gitError?' error':connected&&!dirty.length&&syncedBooks?' success':'');
+    const description=connected?`${gitConfig.owner}/${gitConfig.repo} · ${gitConfig.branch}/${gitConfig.path}/`:'Not connected';
+    status.textContent=(gitMessage||`${description}. ${connected?'Tap Refresh to check for changes.':'Books are only on this device.'}`)+(dirty.length?' · '+dirty.length+' book(s) have unpublished changes.':'');
+    $('gitPublish').disabled=gitBusy||!connected;
+    $('gitRefresh').disabled=gitBusy||!connected;
+    $('gitDiscard').disabled=gitBusy||!connected||!dirty.length;
+    $('gitConnect').disabled=gitBusy;
+    $('gitEditWeb').href=connected?'https://github.com/'+encodeURIComponent(gitConfig.owner)+'/'+encodeURIComponent(gitConfig.repo)+'/tree/'+encodeURIComponent(gitConfig.branch)+'/'+gitConfig.path.split('/').map(encodeURIComponent).join('/'):'https://github.com';
+  }
+  function saveGitMeta(){
+    try{localStorage.setItem(GIT_KEY,JSON.stringify({config:gitConfig,syncedBooks,gitBookShas,gitLegacy}));}catch(e){console.warn('Git settings could not be saved:',e);}
+  }
+  function loadGitMeta(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(GIT_KEY)||'null');
+      // Upgrade repository connection from the earlier combined-books version.
+      const prior=JSON.parse(localStorage.getItem('roleforge-github-shared-v1')||'null');
+      if(saved?.config){try{gitConfig=validateGitConfig(saved.config);}catch(_){gitConfig={...DEFAULT_GIT};}}
+      else if(prior?.config){try{gitConfig=validateGitConfig({...prior.config,path:'books'});}catch(_){gitConfig={...DEFAULT_GIT};}}
+      if(saved?.syncedBooks&&typeof saved.syncedBooks==='object'){
+        const map={};for(const [id,b] of Object.entries(saved.syncedBooks))map[id]=normalizeBook(b,id);
+        syncedBooks=map;gitBookShas=saved.gitBookShas||{};gitLegacy=Boolean(saved.gitLegacy);
+      }
+    }catch(e){console.warn('Invalid saved Git metadata ignored:',e);}
+    try{
+      const qs=new URLSearchParams(location.search),repo=qs.get('repo');
+      if(repo&&/^[^/]+\/[^/]+$/.test(repo)){
+        const [owner,name]=repo.split('/');const cfg=validateGitConfig({owner,repo:name,branch:qs.get('branch')||'main',path:qs.get('dir')||'books'});
+        if(JSON.stringify(cfg)!==JSON.stringify(gitConfig)){syncedBooks=null;gitBookShas={};gitLegacy=false;}
+        gitConfig=cfg;saveGitMeta();
+      }else if(location.hostname.toLowerCase().endsWith('.github.io')){
+        const owner=location.hostname.slice(0,-'.github.io'.length),repoName=location.pathname.split('/').filter(Boolean)[0];
+        if(owner&&repoName&&!gitConfig.owner){gitConfig=validateGitConfig({owner,repo:repoName,branch:'main',path:'books'});saveGitMeta();}
+      }
+    }catch(e){console.warn('GitHub URL configuration ignored:',e);}
+    for(const [key,id] of [['owner','gitOwner'],['repo','gitRepo'],['branch','gitBranch'],['path','gitPath']])$(id).value=gitConfig[key];
+  }
+  function githubApiUrl(path,ref=true){
+    return 'https://api.github.com/repos/'+encodeURIComponent(gitConfig.owner)+'/'+encodeURIComponent(gitConfig.repo)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+(ref?'?ref='+encodeURIComponent(gitConfig.branch):'');
+  }
+  const githubHeaders=token=>({'Accept':'application/vnd.github+json',...(token?{'Authorization':'Bearer '+token}:{})});
+  async function githubGet(path,token=''){
+    const response=await fetch(githubApiUrl(path),{headers:githubHeaders(token),cache:'no-store'});
+    if(response.status===404)return null;
+    if(!response.ok){const obj=await response.json().catch(()=>({}));throw Error('GitHub read failed ('+response.status+'): '+String(obj.message||response.statusText));}
+    return await response.json();
+  }
+  function decodeGithubContent(data){
+    if(!data||data.type!=='file'||typeof data.sha!=='string'||typeof data.content!=='string')throw Error('GitHub returned an invalid file response.');
+    const binary=atob(data.content.replace(/\s/g,''));const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+    return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+  }
+  async function readGithubBooks(token=''){
+    const dir=await githubGet(gitConfig.path,token);
+    if(dir!==null){
+      if(!Array.isArray(dir))throw Error('GitHub books path must be a folder, not a JSON file.');
+      const files=dir.filter(e=>e.type==='file'&&/^[-\w]{1,100}\.json$/.test(e.name));
+      if(files.length>75)throw Error('Shared library exceeds the 75 book limit.');
+      const map={},shas={};
+      // Check the folder SHA list first; fetch only new or changed books to avoid rate limits.
+      for(const file of files){
+        const id=file.name.slice(0,-5),path=gitConfig.path+'/'+file.name;
+        if(shas[id])throw Error('Duplicate book filename: '+file.name);
+        shas[id]=file.sha;
+        if(gitBookShas[id]===file.sha&&syncedBooks?.[id])map[id]=normalizeBook(syncedBooks[id],id);
+        else{
+          const fetched=await githubGet(path,token);
+          if(!fetched)throw Error('Book was removed during refresh: '+file.name);
+          map[id]=normalizeBook(decodeGithubContent(fetched),id);
+          shas[id]=fetched.sha;
+        }
+      }
+      return {books:map,shas,legacy:null};
+    }
+    // Backward compatibility: existing installations used one books.json. Import it without deleting it.
+    const legacyData=await githubGet('books.json',token);
+    if(legacyData)return {books:{},shas:{},legacy:normalizeCatalog(decodeGithubContent(legacyData))};
+    return {books:{},shas:{},legacy:null};
+  }
+  function installCatalog(remote){
+    // Replace only public book definitions. Preserve local quotas, player names and secrets.
+    const oldCats=new Map(state.categories.map(c=>[c.name.trim().toLocaleLowerCase(),c]));
+    const oldMin=state.chaosMinimums,oldSelected=state.chaosSelected;
+    state.books=remote.books.map(b=>({...b}));
+    state.categories=remote.categories.map(c=>{
+      const old=oldCats.get(c.name.trim().toLocaleLowerCase());
+      return makeCat(c.name,c.color,old?.min??0,old?.max??0,c.roles.map(r=>makeRole(r.name,r.book,r.description,r.copies)));
+    });
+    const ids=new Set(state.books.map(b=>b.id));
+    state.chaosMinimums=Object.fromEntries(state.books.map(b=>[b.id,n(oldMin[b.id]??0)]));
+    state.chaosSelected=oldSelected.filter(id=>ids.has(id));
+    if(!state.chaosSelected.length)state.chaosSelected=state.books.map(b=>b.id);
+    if(state.mode!=='chaos'&&!ids.has(state.mode))state.mode=state.books[0]?.id||'chaos';
+    state.revision++;persist();renderAll();
+  }
+  async function gitRefresh(force=false,automatic=false){
+    if(gitBusy||!gitConfig.owner)return;
+    if(isBookDirty()&&!force){if(!automatic)setGitStatus('Unpublished edits exist. Publish or discard them before refreshing. Your edits have not been lost.');return;}
+    if(automatic&&(document.hidden||document.activeElement?.matches('input, textarea, select')))return;
+    const before=JSON.stringify(catalog());gitBusy=true;setGitStatus('Checking GitHub books folder…');
+    try{
+      const remote=await readGithubBooks();
+      if(JSON.stringify(catalog())!==before){setGitStatus('Book edits were made while refreshing. Refresh again after saving.');return;}
+      if(remote.legacy){
+        if(!sameBookMaps(booksFromState(),booksFromCatalog(remote.legacy)))installCatalog(remote.legacy);
+        syncedBooks={};gitBookShas={};gitLegacy=true;
+        setGitStatus('Loaded your existing books.json. Choose Publish to migrate each book into its own file and commit. The old books.json stays untouched.');
+      }else if(Object.keys(remote.books).length){
+        if(!sameBookMaps(booksFromState(),remote.books))installCatalog(catalogFromBooks(remote.books));
+        syncedBooks=remote.books;gitBookShas=remote.shas;gitLegacy=false;
+        setGitStatus('Loaded '+Object.keys(remote.books).length+' independent book file(s) from GitHub.');
+      }else{
+        // Preserve local books when connected to an empty/new repository so editors can publish them.
+        syncedBooks={};gitBookShas={};gitLegacy=false;
+        setGitStatus('No shared book files found at '+gitConfig.path+'/. Your local books are ready to publish as separate commits.');
+      }
+      gitLastCheck=Date.now();saveGitMeta();
+    }catch(e){setGitStatus('Cannot refresh shared books: '+e.message,true);}
+    finally{gitBusy=false;updateGitStatus();}
+  }
+  function encodeBase64UTF8(value){
+    const bytes=new TextEncoder().encode(value);let s='';
+    for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));
+    return btoa(s);
+  }
+  async function writeBookCommit(op,id,book,sha,token){
+    const path=gitConfig.path+'/'+id+'.json';
+    const msg=op==='delete'?'Delete Roleforge book: '+id:(sha?'Update Roleforge book: ':'Add Roleforge book: ')+book.name;
+    const body={message:msg,branch:gitConfig.branch};
+    if(op==='delete')body.sha=sha;
+    else{body.content=encodeBase64UTF8(JSON.stringify(book,null,2)+'\n');if(sha)body.sha=sha;}
+    const res=await fetch(githubApiUrl(path,false),{method:op==='delete'?'DELETE':'PUT',headers:{...githubHeaders(token),'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw Error('Commit for '+id+' failed ('+res.status+'): '+String(data.message||res.statusText));
+    return op==='delete'?null:data.content?.sha;
+  }
+  async function gitPublish(){
+    if(gitBusy)return;
+    let cfg;try{cfg=validateGitConfig(gitFields());}catch(e){alert(e.message);return;}
+    if(JSON.stringify(cfg)!==JSON.stringify(gitConfig)){alert('Save and load the GitHub connection before publishing.');return;}
+    if(syncedBooks===null){setGitStatus('Connect and refresh your GitHub library before publishing.',true);return;}
+    const token=$('gitToken').value.trim();
+    if(!token){setGitStatus('Enter your own fine-grained GitHub token with Contents: Read and write. It will not be stored.',true);$('gitToken').focus();return;}
+    const desired=booksFromState(),changed=dirtyBookIds();
+    if(!changed.length){setGitStatus('No unpublished book edits to commit.');return;}
+    const titles=changed.map(id=>desired[id]?.name||syncedBooks[id]?.name||id);
+    if(!confirm('Publish '+changed.length+' changed book(s) as '+changed.length+' SEPARATE Git commit(s)?\n\n'+titles.join('\n')+'\n\nEach commit changes only that book file.'))return;
+    gitBusy=true;setGitStatus('Verifying latest GitHub revisions before committing…');
+    let working=null,shas=null,done=[];
+    try{
+      const remote=await readGithubBooks(token);working={...remote.books};shas={...remote.shas};
+      const completedBaseline={...syncedBooks},completedShas={...gitBookShas};
+      // A file touched by another editor must not be overwritten; other books may change independently.
+      const conflicts=changed.filter(id=>!contentEqual(remote.books[id],syncedBooks[id])&&!contentEqual(remote.books[id],desired[id]));
+      if(conflicts.length)throw Error('These books changed on GitHub since your last refresh: '+conflicts.join(', ')+'. Export a backup, then refresh and reapply only those edits. No commits were made.');
+      // Each API PUT or DELETE makes exactly one commit. Operations are SERIAL to prevent GitHub conflicts.
+      for(const id of changed){
+        if(contentEqual(working[id],desired[id]))continue;
+        const op=desired[id]?'put':'delete';
+        const nextSha=await writeBookCommit(op,id,desired[id],shas[id],token);
+        if(desired[id]){working[id]=desired[id];shas[id]=nextSha||shas[id];completedBaseline[id]=desired[id];completedShas[id]=shas[id];}
+        else{delete working[id];delete shas[id];delete completedBaseline[id];delete completedShas[id];}
+        done.push(id);
+        // If a later request fails, leave untouched remote edits outside our baseline.
+        syncedBooks={...completedBaseline};gitBookShas={...completedShas};saveGitMeta();
+        setGitStatus('Committed '+done.length+'/'+changed.length+' book(s) separately…');
+      }
+      syncedBooks={...working};gitBookShas={...shas};gitLegacy=false;gitLastCheck=Date.now();saveGitMeta();
+      installCatalog(catalogFromBooks(working));
+      setGitStatus('Published '+done.length+' separate commit(s). Other editors can refresh to get the new books.');
+    }catch(e){
+      // Already completed commits stay on GitHub; the remaining local edits are preserved for retry.
+      setGitStatus((done.length?'Published '+done.length+' book commit(s) before stopping. ':'')+e.message,true);
+    }finally{gitBusy=false;updateGitStatus();}
+  }
+  function gitConnect(){
+    let cfg;try{cfg=validateGitConfig(gitFields());}catch(e){setGitStatus(e.message,true);return;}
+    const changedRepo=JSON.stringify(cfg)!==JSON.stringify(gitConfig);
+    if(changedRepo&&(isBookDirty()||syncedBooks===null&&state.categories.some(c=>c.roles.some(r=>r.name.trim())))&&!confirm('Connecting may replace local books with the repository library. Export a JSON backup first if you need your local changes. Continue?'))return;
+    gitConfig=cfg;if(changedRepo){syncedBooks=null;gitBookShas={};gitLegacy=false;}
+    saveGitMeta();setGitStatus('Repository configured. Loading each GitHub book…');gitRefresh(true);
+  }
+  function gitShareLink(){
+    let cfg;try{cfg=validateGitConfig(gitFields());}catch(e){setGitStatus(e.message,true);return;}
+    if(location.protocol==='file:'){setGitStatus('Host index.html with GitHub Pages or Netlify before sharing the URL.',true);return;}
+    const u=new URL(location.href);u.searchParams.set('repo',cfg.owner+'/'+cfg.repo);u.searchParams.set('branch',cfg.branch);u.searchParams.set('dir',cfg.path);u.searchParams.delete('file');u.hash='';
+    const value=u.toString();
+    if(navigator.clipboard?.writeText)navigator.clipboard.writeText(value).then(()=>setGitStatus('Copied shared books URL.')).catch(()=>prompt('Copy shared URL:',value));
+    else prompt('Copy shared URL:',value);
+  }
+  $('gitConnect').addEventListener('click',gitConnect);
+  $('gitRefresh').addEventListener('click',()=>gitRefresh(false));
+  $('gitDiscard').addEventListener('click',()=>{if(confirm('Discard ALL unpublished local book changes and load from GitHub? Player names, quotas and secret assignments stay local.'))gitRefresh(true);});
+  $('gitPublish').addEventListener('click',gitPublish);
+  $('gitShare').addEventListener('click',gitShareLink);
+  $('gitClearToken').addEventListener('click',()=>{$('gitToken').value='';setGitStatus('Editor token cleared from this page.');});
+  $('gitDownload').addEventListener('click',()=>download('books-combined-backup.json',catalogText(),'application/json;charset=utf-8'));
+  loadGitMeta();
+  setGitStatus(gitConfig.owner?'Configured '+gitConfig.owner+'/'+gitConfig.repo+'. Checking each book…':'Local book library. Enter a public GitHub repository to share books.');
+  window.setInterval(()=>{if(gitConfig.owner&&Date.now()-gitLastCheck>=GIT_INTERVAL_MS)gitRefresh(false,true);},GIT_INTERVAL_MS);
+  if(gitConfig.owner)gitRefresh(false);
+
+  renderAll();
+})();
+
+</script>
+</body>
+</html>
