@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 2,
+  "id": "id_bku7jbcdmwbh0jzs",
+  "name": "Open Source Roles",
+  "categories": [
+    {
+      "name": "Villager",
+      "color": "#e9b769",
+      "roles": [
+        {
+          "name": "Amnesiac",
+          "copies": 1,
+          "description": ""
+        },
+        {
+          "name": "Skald",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Outcast",
+      "color": "#83bacd",
+      "roles": [
+        {
+          "name": "Phantasm",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Fiend",
+      "color": "#e6a6a6",
+      "roles": [
+        {
+          "name": "Voodoo Master",
+          "copies": 1,
+          "description": ""
+        }
+      ]
+    }
+  ]
+}
